@@ -1,7 +1,7 @@
 const todos = restoredTodos();
 const todosArray = () => [...todos.values()];
 
-let id = 0;
+let id = Math.max(0, ...todos.keys());
 
 window.addEventListener('todo:request:list', (event) => {
     const { detail: requestId } = event;
