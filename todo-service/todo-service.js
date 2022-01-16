@@ -3,7 +3,12 @@ const todos = new Map();
 let id = 0;
 
 window.addEventListener('todo:add', (event) => {
-    const { detail: { task } } = event;
+    const { detail: { task } = {} } = event;
+
+    if (!task) {
+        console.error('Missing task!');
+        return;
+    }
 
     id++;
 
@@ -42,5 +47,5 @@ window.addEventListener('todo:remove', (event) => {
 });
 
 function listUpdated() {
-    window.dispatchEvent(new CustomEvent('todo:list-updated', { detail: todos }));
+    window.dispatchEvent(new CustomEvent('todo:list-updated', { detail: [...todos.values()] }));
 }

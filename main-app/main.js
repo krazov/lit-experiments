@@ -2,6 +2,7 @@ import { LitElement, html, css } from 'https://unpkg.com/lit-element/lit-element
 
 import '../todo-service/todo-service.js';
 
+import '../form-app/form-app.js';
 import '../list-app/list-app.js';
 
 class MainApp extends LitElement {
@@ -44,6 +45,7 @@ class MainApp extends LitElement {
         return html`
             <div class="app">
                 <h1 class="app-title">${this.title}</h1>
+                <form-app></form-app>
                 <div>Tabs</div>
                 <todo-list></todo-list>
             </div>

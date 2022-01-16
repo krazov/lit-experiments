@@ -28,7 +28,7 @@ class TodoList extends LitElement {
 
     updateList = (event) => {
         const { detail: todos = {} } = event;
-        this.list = [...todos.values()];
+        this.list = todos;
         console.log(this.list);
     }
 
