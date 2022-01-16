@@ -1,5 +1,7 @@
 import { LitElement, html, css } from 'https://unpkg.com/lit-element/lit-element.js?module';
 
+import './todo-list-item.js';
+
 class TodoList extends LitElement {
     static get properties() {
         return {
@@ -8,7 +10,11 @@ class TodoList extends LitElement {
     }
 
     static get styles() {
-        return css``;
+        return css`
+            :host {
+                display: block;
+            }
+        `;
     }
 
     constructor() {
@@ -28,11 +34,19 @@ class TodoList extends LitElement {
         super.disconnectedCallback();
     }
 
-    hydrateList() {
+    async hydrateList() {
         // TODO: this part should be abstracted as well, but I don’t see where it falls yet
         const requestId = `todo:request:list:${Date.now()}`;
+        const handleList = (function (event) {
+            const { detail: todos = {} } = event;
+            this.list = todos;
 
-        window.addEventListener(requestId, this.updateList);
+            console.log('List hydrated with:', todos);
+
+            window.removeEventListener(requestId, handleList);
+        }).bind(this);
+
+        window.addEventListener(requestId, handleList);
         window.dispatchEvent(new CustomEvent('todo:request:list', { detail: requestId }));
     }
 
@@ -43,10 +57,27 @@ class TodoList extends LitElement {
         console.log('List updated with', todos);
     }
 
-    get todosList() {
-        const listItems = this.list.map(todo => html`<li class="todo-list-item">#${todo.id}: ${todo.task}</li>`);
+    toggleTodoStatus = (event) => {
+        const { detail: { id, isDone } } = event;
 
-        return html`<ul class="todo-list">${listItems}</ul>`;
+        window.dispatchEvent(new CustomEvent('todo:update', { detail: {
+            id,
+            isDone,
+        }}));
+    };
+
+    get todosList() {
+        const listItems = this.list.map(todo =>
+            html`
+                <todo-list-item
+                    id="${todo.id}"
+                    task="${todo.task}"
+                    ?is-done=${todo.isDone}
+                    @update-todo="${this.toggleTodoStatus}"
+                ></todo-list-item>`
+        );
+
+        return html`${listItems}`;
     }
 
     get emptyListMessage() {

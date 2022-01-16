@@ -7,7 +7,7 @@ window.addEventListener('todo:request:list', (event) => {
     const { detail: requestId } = event;
     window.dispatchEvent(new CustomEvent(requestId, { detail: todosArray() }));
 
-    console.log('Responded to', requestId)
+    console.log('Responded to', requestId);
 });
 
 window.addEventListener('todo:add', (event) => {
@@ -29,10 +29,10 @@ window.addEventListener('todo:add', (event) => {
     listUpdated();
 });
 
-window.addEventListener('todo:edit', (event) => {
+window.addEventListener('todo:update', (event) => {
+    const { detail: { id } } = event;
     const current = todos.get(id);
     const { detail: {
-        id,
         task = current.task,
         isDone = current.isDone,
     } } = event;
