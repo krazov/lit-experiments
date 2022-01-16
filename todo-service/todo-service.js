@@ -1,6 +1,14 @@
-const todos = new Map();
+const todos = restoredTodos();
+const todosArray = () => [...todos.values()];
 
 let id = 0;
+
+window.addEventListener('todo:request:list', (event) => {
+    const { detail: requestId } = event;
+    window.dispatchEvent(new CustomEvent(requestId, { detail: todosArray() }));
+
+    console.log('Responded to', requestId)
+});
 
 window.addEventListener('todo:add', (event) => {
     const { detail: { task } = {} } = event;
@@ -47,5 +55,13 @@ window.addEventListener('todo:remove', (event) => {
 });
 
 function listUpdated() {
-    window.dispatchEvent(new CustomEvent('todo:list-updated', { detail: [...todos.values()] }));
+    const valuesArray = todosArray();
+
+    window.localStorage.setItem('todos', JSON.stringify(valuesArray));
+    window.dispatchEvent(new CustomEvent('todo:list-updated', { detail: valuesArray }));
+}
+
+function restoredTodos() {
+    const todos = JSON.parse(window.localStorage.getItem('todos')) || [];
+    return new Map(todos.map(item => [item.id, item]));
 }

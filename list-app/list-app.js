@@ -14,6 +14,8 @@ class TodoList extends LitElement {
     constructor() {
         super();
         this.list = [];
+
+        this.hydrateList();
     }
 
     connectedCallback() {
@@ -26,10 +28,19 @@ class TodoList extends LitElement {
         super.disconnectedCallback();
     }
 
+    hydrateList() {
+        // TODO: this part should be abstracted as well, but I don’t see where it falls yet
+        const requestId = `todo:request:list:${Date.now()}`;
+
+        window.addEventListener(requestId, this.updateList);
+        window.dispatchEvent(new CustomEvent('todo:request:list', { detail: requestId }));
+    }
+
     updateList = (event) => {
         const { detail: todos = {} } = event;
         this.list = todos;
-        console.log(this.list);
+
+        console.log('List updated with', todos);
     }
 
     get todosList() {
