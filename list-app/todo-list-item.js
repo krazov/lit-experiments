@@ -56,6 +56,8 @@ class TodoListItem extends LitElement {
         const { path: [formElement] } = event;
         const task = inputValue(formElement);
 
+        if (task == this.task) return;
+
         this.dispatchEvent(new CustomEvent('update-todo', { detail: {
             id: this.id,
             task,
