@@ -1,4 +1,5 @@
-import { LitElement, html, css } from 'https://unpkg.com/lit-element/lit-element.js?module';
+import { LitElement, html, css } from 'https://unpkg.com/lit/index.js?module';
+import { request } from '../util/request.util.js';
 
 import './todo-list-item.js';
 
@@ -6,6 +7,8 @@ class TodoList extends LitElement {
     static get properties() {
         return {
             list: { type: Array },
+            mode: { type: String },
+            order: { type: String },
         };
     }
 
@@ -14,6 +17,12 @@ class TodoList extends LitElement {
             :host {
                 display: block;
             }
+
+            .is-done {
+                color: gainsboro;
+            }
+
+            .is-pending {}
         `;
     }
 
@@ -27,27 +36,27 @@ class TodoList extends LitElement {
     connectedCallback() {
         super.connectedCallback();
         window.addEventListener('todo:list-updated', this.updateList);
+        window.addEventListener('list:mode:has-updated', this.updateMode);
+        window.addEventListener('list:order:has-updated', this.updateOrder);
     }
 
     disconnectedCallback() {
         window.removeEventListener('todo:list-updated', this.updateList);
+        window.removeEventListener('list:mode:has-updated', this.updateMode);
+        window.removeEventListener('list:order:has-updated', this.updateOrder);
         super.disconnectedCallback();
     }
 
     async hydrateList() {
-        // TODO: this part should be abstracted as well, but I don’t see where it falls yet
-        const requestId = `todo:request:list:${Date.now()}`;
-        const handleList = (function (event) {
-            const { detail: todos = {} } = event;
-            this.list = todos;
+        const [todos, mode, order] = await Promise.all([
+            request('todo:request:list'),
+            request('request:list:mode'),
+            request('request:list:order'),
+        ]);
 
-            console.log('List hydrated with:', todos);
-
-            window.removeEventListener(requestId, handleList);
-        }).bind(this);
-
-        window.addEventListener(requestId, handleList);
-        window.dispatchEvent(new CustomEvent('todo:request:list', { detail: requestId }));
+        this.list = todos;
+        this.mode = mode;
+        this.order = order;
     }
 
     updateList = (event) => {
@@ -56,6 +65,16 @@ class TodoList extends LitElement {
 
         console.log('List updated with', todos);
     }
+
+    updateMode = (event) => {
+        const { detail: mode } = event;
+        this.mode = mode;
+    };
+
+    updateOrder = (event) => {
+        const { detail: order } = event;
+        this.order = order;
+    };
 
     updateTodo = (event) => {
         const { detail: { id, task, isDone } } = event;
@@ -68,15 +87,41 @@ class TodoList extends LitElement {
     };
 
     get todosList() {
-        const listItems = this.list.map(todo =>
-            html`
-                <todo-list-item
-                    id="${todo.id}"
-                    task="${todo.task}"
-                    ?is-done=${todo.isDone}
-                    @update-todo="${this.updateTodo}"
-                ></todo-list-item>`
-        );
+        const listItems = this.list
+            .filter(todo => {
+                switch (this.mode) {
+                    case 'all':
+                        return true;
+                    case 'pending':
+                        return !todo.isDone;
+                    case 'done':
+                        return todo.isDone;
+                    default:
+                        throw Error('Wrong mode value.');
+                }
+            })
+            .sort((todo1, todo2) => {
+                switch (this.order) {
+                    case 'by-id':
+                        return todo1.id - todo2.id;
+                    case 'pending-first':
+                        return todo1.isDone && todo2.isDone ? 0 : !todo1.isDone && todo2.isDone ? -1 : 1;
+                    case 'done-first':
+                        return todo1.isDone && todo2.isDone ? 0 : !todo1.isDone && todo2.isDone ? 1 : -1;
+                    default:
+                        throw Error('Wrong order value.');
+                }
+            })
+            .map(todo =>
+                html`
+                    <todo-list-item
+                        class="${todo.isDone ? 'is-done' : 'is-pending'}"
+                        id="${todo.id}"
+                        task="${todo.task}"
+                        ?is-done=${todo.isDone}
+                        @update-todo="${this.updateTodo}"
+                    ></todo-list-item>`
+            );
 
         return html`${listItems}`;
     }
