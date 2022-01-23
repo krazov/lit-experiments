@@ -54,13 +54,13 @@ class TodoListItem extends LitElement {
         this.isBeingEdited = false;
 
         const { path: [formElement] } = event;
-        const task = inputValue(formElement);
+        const updatedTask = inputValue(formElement);
 
-        if (task == this.task) return;
+        if (updatedTask == this.task) return;
 
         this.dispatchEvent(new CustomEvent('update-todo', { detail: {
             id: this.id,
-            task,
+            task: updatedTask,
         } }));
     };
 
