@@ -57,12 +57,13 @@ class TodoList extends LitElement {
         console.log('List updated with', todos);
     }
 
-    toggleTodoStatus = (event) => {
-        const { detail: { id, isDone } } = event;
+    updateTodo = (event) => {
+        const { detail: { id, task, isDone } } = event;
 
         window.dispatchEvent(new CustomEvent('todo:update', { detail: {
             id,
-            isDone,
+            ...typeof task =='string' && { task },
+            ...typeof isDone == 'boolean' && { isDone },
         }}));
     };
 
@@ -73,7 +74,7 @@ class TodoList extends LitElement {
                     id="${todo.id}"
                     task="${todo.task}"
                     ?is-done=${todo.isDone}
-                    @update-todo="${this.toggleTodoStatus}"
+                    @update-todo="${this.updateTodo}"
                 ></todo-list-item>`
         );
 
