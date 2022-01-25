@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'https://unpkg.com/lit-element/lit-element.js?module';
+import { LitElement, html, css } from 'https://unpkg.com/lit/index.js?module';
 
 const inputValue = (formElement) => formElement.querySelector('input').value;
 
