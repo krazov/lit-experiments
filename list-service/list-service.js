@@ -1,5 +1,5 @@
-import { emit } from '../util/emit.util.js';
-import { requestId } from '../util/request.util.js';
+import { emit } from 'emit-util';
+import { requestId } from 'request-util';
 
 const modes = new Map([
     ['all', 'All'],

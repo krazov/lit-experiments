@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { ifDefined } from 'lit-if-defined';
-import { request } from '../util/request.util.js';
-import { emit } from '../util/emit.util.js';
+import { request } from 'request-util';
+import { emit } from 'emit-util';
 
 class TabsApp extends LitElement {
     static get properties() {

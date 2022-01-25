@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'lit';
-import { request } from '../util/request.util.js';
+import { request } from 'request-util';
 
 import './todo-list-item.js';
 

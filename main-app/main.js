@@ -1,11 +1,11 @@
 import { LitElement, html, css } from 'lit';
 
-import '../todo-service/todo-service.js';
-import '../list-service/list-service.js';
+import 'todo-service';
+import 'list-service';
 
-import '../form-app/form-app.js';
-import '../filters-app/filters-app.js';
-import '../list-app/list-app.js';
+import 'form-app';
+import 'filters-app';
+import 'list-app';
 
 class MainApp extends LitElement {
     static get properties() {
