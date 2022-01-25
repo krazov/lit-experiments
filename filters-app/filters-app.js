@@ -1,5 +1,5 @@
-import { LitElement, html, css } from 'https://unpkg.com/lit/index.js?module';
-import { ifDefined } from 'https://unpkg.com/lit/directives/if-defined.js?module';
+import { LitElement, html, css } from 'lit';
+import { ifDefined } from 'lit-if-defined';
 import { request } from '../util/request.util.js';
 import { emit } from '../util/emit.util.js';
 

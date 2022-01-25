@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'https://unpkg.com/lit/index.js?module';
+import { LitElement, html, css } from 'lit';
 
 import '../todo-service/todo-service.js';
 import '../list-service/list-service.js';
