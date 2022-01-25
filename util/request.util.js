@@ -5,8 +5,10 @@ function generateRandomString () {
 	return Array.from(array, dec => ('0' + dec.toString(16)).substr(-2)).join('');
 }
 
+// TODO: consider setting a timeout after which the request fails
+
 /**
- * A wrapper for one-time request
+ * A wrapper for one-time request returning a promise with the response.
  * @param {string} eventName - A name of event that will be listened to somewhere, you don’t know where.
  * @returns {Promise<any>} Event’s `detail` property
  */
