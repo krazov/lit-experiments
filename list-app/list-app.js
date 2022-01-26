@@ -105,9 +105,13 @@ class TodoList extends LitElement {
                     case 'by-id':
                         return todo1.id - todo2.id;
                     case 'pending-first':
-                        return todo1.isDone && todo2.isDone ? 0 : !todo1.isDone && todo2.isDone ? -1 : 1;
+                        return todo1.isDone == todo2.isDone
+                            ? todo1.id - todo2.id
+                            : !todo1.isDone && todo2.isDone ? -1 : 1;
                     case 'done-first':
-                        return todo1.isDone && todo2.isDone ? 0 : !todo1.isDone && todo2.isDone ? 1 : -1;
+                        return todo1.isDone == todo2.isDone
+                            ? todo1.id - todo2.id
+                            : !todo1.isDone && todo2.isDone ? 1 : -1;
                     default:
                         throw Error('Wrong order value.');
                 }
