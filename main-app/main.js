@@ -27,22 +27,6 @@ class MainApp extends LitElement {
         this.title = "An app";
     }
 
-    connectedCallback() {
-        super.connectedCallback();
-        window.addEventListener('main-app-title-updated', this.updateTitle);
-    }
-
-    disconnectedCallback() {
-        window.removeEventListener('main-app-title-updated', this.updateTitle);
-        super.disconnectedCallback();
-    }
-
-    updateTitle = (event) => {
-        const { detail: { title } = {} } = event;
-        if (title === undefined) return;
-        this.title = title;
-    }
-
     render() {
         return html`
             <div class="app">
